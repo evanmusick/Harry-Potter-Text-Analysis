@@ -24,4 +24,4 @@ ggplot(deathly_hallows_tf_idf, aes(x = reorder(word, tf_idf), y = tf_idf, fill =
   facet_wrap(~Chapter, scales = "free") +
   coord_flip()
 
-test
+test2
