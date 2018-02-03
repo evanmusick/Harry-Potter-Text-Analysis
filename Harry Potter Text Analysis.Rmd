@@ -1,0 +1,38 @@
+---
+title: "A Novice Analysis of the Words in Harry Potter"
+author: "Evan Musick"
+date: "January 30, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Reading in the Text
+
+I found someone who has kindly provided access to the entire text of each Harry Potter book. The data can be accessed [here](https://github.com/bradleyboehmke/harrypotter). Each book is a character vector - one for each chapter. The chapter names are included at the beginning of each vector and need to be removed. There are some misspellings ("foribidden" instead of "forbidden"), so this may call into question the accuracy of the data. 
+
+```{r message=FALSE}
+library(harrypotter)
+library(tidyverse)
+library(tidytext)
+
+chapter_names <- str_to_upper(c("The Boy Who Lived", "The Vanishing Glass", "The Letters from No One", 
+                                "The Keeper of the Keys", "Diagon Alley", 
+                                "The Journey from Platform Nine and Three-Quarters", "The Sorting Hat", 
+                                "The Potions Master", "The Midnight Duel", "Halloween", "Quidditch", 
+                                "The Mirror of Erised", "Nicolas Flamel", "Norbert the Norwegian Ridgeback", 
+                                "The Foribidden Forest", "Through the Trapdoor", "The Man with Two Faces"))
+
+philosophers_stone_raw <- tibble(philosophers_stone) %>%
+  mutate(chapter = row_number(),
+         text = str_replace(philosophers_stone, chapter_names, "")) %>%
+  select(-philosophers_stone) %>%
+  unnest_tokens(word, text)
+```
+This gives us the following:
+```{r echo = FALSE}
+philosophers_stone_raw
+```
+
