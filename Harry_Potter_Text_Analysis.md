@@ -1,19 +1,14 @@
----
-title: "A Novice Analysis of the Words in Harry Potter"
-author: "Evan Musick"
-date: "January 30, 2018"
-output: rmarkdown::github_document
----
+A Novice Analysis of the Words in Harry Potter
+================
+Evan Musick
+January 30, 2018
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Reading in the Text
+Reading in the Text
+-------------------
 
 I found someone who has kindly provided access to the entire text of each Harry Potter book. The data can be accessed [here](https://github.com/bradleyboehmke/harrypotter). Each book is a character vector - one for each chapter.
 
-```{r message=FALSE}
+``` r
 library(harrypotter)
 library(tidyverse)
 library(tidytext)
@@ -33,10 +28,21 @@ process_text <- function(book_title, books){
 }
 
 all_books_raw <- bind_rows(lapply(names(books), process_text, books))
-
 ```
+
 This gives us one word per row with identifiers for the book and chapter.
-```{r echo = FALSE}
-all_books_raw
-```
 
+    ## # A tibble: 1,089,386 x 3
+    ##    chapter book             word   
+    ##      <int> <chr>            <chr>  
+    ##  1       1 Sorcerer's Stone the    
+    ##  2       1 Sorcerer's Stone boy    
+    ##  3       1 Sorcerer's Stone who    
+    ##  4       1 Sorcerer's Stone lived  
+    ##  5       1 Sorcerer's Stone mr     
+    ##  6       1 Sorcerer's Stone and    
+    ##  7       1 Sorcerer's Stone mrs    
+    ##  8       1 Sorcerer's Stone dursley
+    ##  9       1 Sorcerer's Stone of     
+    ## 10       1 Sorcerer's Stone number 
+    ## # ... with 1,089,376 more rows
