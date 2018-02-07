@@ -50,6 +50,11 @@ This gives us one word per row with identifiers for the book and chapter.
     ## 10       1 Sorcerer's Stone number 
     ## # ... with 1,089,376 more rows
 
+Character Mentions
+------------------
+
+I've identified the 3 main characters as our characters of interest. Let's find out which book has the most (by percentage of words) mentions of each character.
+
 ``` r
 characters_of_interest <- c("harry" = "Harry", "ron" = "Ron", "hermione" = "Hermione")
 
@@ -71,6 +76,8 @@ all_books_raw %>%
 
 ![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
+Now let's find out the popularity of each character within each book. For example, we can look at how many times Ron was mentioned compared to the total mentions of all three characters.
+
 ``` r
 all_books_raw %>%
   filter(word %in% names(characters_of_interest)) %>%
@@ -89,4 +96,4 @@ all_books_raw %>%
         strip.text = element_text(size = 11))
 ```
 
-![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-2.png)
+![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-4-1.png)
