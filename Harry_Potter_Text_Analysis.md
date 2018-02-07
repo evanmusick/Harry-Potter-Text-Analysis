@@ -53,13 +53,14 @@ This gives us one word per row with identifiers for the book and chapter.
 Character Mentions
 ------------------
 
-I've identified the 3 main characters as our characters of interest. Let's find out which book has the most (by percentage of words) mentions of each character.
+I've identified the 4 main characters as our characters of interest. Let's find out which book has the most (by percentage of words) mentions of each character.
 
 ``` r
-characters_of_interest <- c("harry" = "Harry", "ron" = "Ron", "hermione" = "Hermione")
+characters_of_interest <- c("harry" = "Harry", "ron" = "Ron", "hermione" = "Hermione", "voldemort" = "Voldemort")
 
 all_books_raw %>%
   count(book, word) %>%
+  group_by(book) %>%
   mutate(freq_by_book = n/sum(n)) %>%
   filter(word %in% names(characters_of_interest)) %>%
   ggplot(aes(x = book, y = freq_by_book, fill = book)) + 
@@ -71,12 +72,13 @@ all_books_raw %>%
   labs(title = "Proportion of Character Mentions", x = "", y = "Proportion of All Words") +
   theme_few() +
   theme(strip.background = element_blank(),
-        strip.text = element_text(size = 11))
+        strip.text = element_text(size = 11),
+        axis.text.x = element_text(size = 7, angle = 45, vjust = .75))
 ```
 
 ![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
-Now let's find out the popularity of each character within each book. For example, we can look at how many times Ron was mentioned compared to the total mentions of all three characters.
+Now let's find out the popularity of each character within each book. For example, we can look at how many times Ron was mentioned compared to the total mentions of all 4 characters.
 
 ``` r
 all_books_raw %>%
@@ -86,7 +88,7 @@ all_books_raw %>%
   mutate(char_freq_by_book = n/sum(n)) %>%
   ggplot(aes(x = book, y = char_freq_by_book, fill = word)) + 
   geom_bar(stat = "identity", alpha = .7, position = "dodge") +
-  scale_fill_brewer(palette = "Dark2", labels = c("Harry", "Hermione", "Ron")) +
+  scale_fill_brewer(palette = "Dark2", labels = c("Harry", "Hermione", "Ron", "Voldemort")) +
   scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
   coord_flip() +
   labs(title = "Character Mentions Relative to Each Other", x = "", 
