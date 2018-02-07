@@ -12,6 +12,7 @@ I found someone who has kindly provided access to the entire text of each Harry 
 library(harrypotter)
 library(tidyverse)
 library(tidytext)
+library(stringr)
 library(knitr)
 
 books <- list("Sorcerer's Stone" = philosophers_stone, "Chamber of Secrets" = chamber_of_secrets, 
@@ -27,14 +28,15 @@ process_text <- function(book_title, books){
   unnest_tokens(word, text)
 }
 
-all_books_raw <- bind_rows(lapply(names(books), process_text, books))
+all_books_raw <- bind_rows(lapply(names(books), process_text, books)) %>%
+  mutate(book = factor(book, levels = unique(book)))
 ```
 
 This gives us one word per row with identifiers for the book and chapter.
 
     ## # A tibble: 1,089,386 x 3
     ##    chapter book             word   
-    ##      <int> <chr>            <chr>  
+    ##      <int> <fct>            <chr>  
     ##  1       1 Sorcerer's Stone the    
     ##  2       1 Sorcerer's Stone boy    
     ##  3       1 Sorcerer's Stone who    
@@ -46,3 +48,18 @@ This gives us one word per row with identifiers for the book and chapter.
     ##  9       1 Sorcerer's Stone of     
     ## 10       1 Sorcerer's Stone number 
     ## # ... with 1,089,376 more rows
+
+``` r
+characters <- c("harry", "ron", "hermione", "dumbledore")
+
+all_books_raw %>%
+  count(book, word) %>%
+  mutate(freq_by_book = n/sum(n)) %>%
+  filter(word %in% characters) %>%
+  ggplot(aes(x = book, y = freq_by_book)) + 
+  geom_bar(stat = "identity") +
+  facet_wrap(~word,  scales = "free") +
+  theme_bw()
+```
+
+![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-1.png)
