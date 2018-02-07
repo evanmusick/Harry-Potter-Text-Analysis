@@ -59,6 +59,8 @@ all_books_raw %>%
   ggplot(aes(x = book, y = freq_by_book)) + 
   geom_bar(stat = "identity") +
   facet_wrap(~word,  scales = "free") +
+  scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
+  coord_flip() +
   theme_bw()
 ```
 
