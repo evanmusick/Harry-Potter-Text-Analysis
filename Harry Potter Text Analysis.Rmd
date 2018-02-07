@@ -49,6 +49,8 @@ I've identified the 4 main characters as our characters of interest. Let's find 
 ```{r}
 characters_of_interest <- c("harry" = "Harry", "ron" = "Ron", "hermione" = "Hermione", "voldemort" = "Voldemort")
 
+book_colors <- c("#7F0909", "#FFC500", "#0D6217", "#946B2D", "#000A90", "#000000", "#AAAAAA")
+
 all_books_raw %>%
   count(book, word) %>%
   group_by(book) %>%
@@ -58,7 +60,7 @@ all_books_raw %>%
   geom_bar(stat = "identity", alpha = .5) +
   facet_grid(.~word,  scales = "free", labeller = as_labeller(characters_of_interest)) +
   scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
-  scale_fill_brewer(guide = FALSE, palette = "Set1") +
+  scale_fill_manual(guide = FALSE, values = book_colors) +
   coord_flip() +
   labs(title = "Proportion of Character Mentions", x = "", y = "Proportion of All Words") +
   theme_few() +
@@ -70,14 +72,16 @@ all_books_raw %>%
 Now let's find out the popularity of each character within each book. For example, we can look at how many times Ron was mentioned compared to the total mentions of all 4 characters. 
 
 ```{r}
+character_colors <- c("#7F0909", "#FFC500",  "#000A90","#0D6217")
+
 all_books_raw %>%
   filter(word %in% names(characters_of_interest)) %>%
   count(book, word) %>%
   group_by(book) %>%
   mutate(char_freq_by_book = n/sum(n)) %>%
   ggplot(aes(x = book, y = char_freq_by_book, fill = word)) + 
-  geom_bar(stat = "identity", alpha = .7, position = "dodge") +
-  scale_fill_brewer(palette = "Dark2", labels = c("Harry", "Hermione", "Ron", "Voldemort")) +
+  geom_bar(stat = "identity", alpha = .5, position = "dodge") +
+  scale_fill_manual(values = character_colors, labels = c("Harry", "Hermione", "Ron", "Voldemort")) +
   scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
   coord_flip() +
   labs(title = "Character Mentions Relative to Each Other", x = "", 
@@ -89,4 +93,33 @@ all_books_raw %>%
 
 ```
 
+## tf-idf: What words are uniquely important to each book?
+
+```{r message=FALSE}
+
+all_books_tf_idf <- all_books_raw %>%
+  anti_join(stop_words) %>%
+  count(book, word) %>%
+  bind_tf_idf(word, book, n) %>%
+  group_by(book) %>%
+  top_n(10, tf_idf) %>%
+  ungroup() %>%
+  arrange(book, tf_idf) %>%
+  mutate(order = row_number())
+
+# Need to reorder by tf-idf within each book
+
+ggplot(all_books_tf_idf, aes(x = order, y = tf_idf, fill = book)) + 
+  geom_col(show.legend = FALSE, alpha = .7) +
+  scale_x_continuous(breaks = all_books_tf_idf$order, labels = all_books_tf_idf$word) +
+  scale_fill_manual(values = book_colors) + 
+  facet_wrap(~book, ncol = 3, scales = "free") +
+  coord_flip() +
+  labs(title = "Top 10 tf-idf Words in the Harry Potter Series", x = "") +
+  theme_bw() +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(size = 11),
+        axis.text.y = element_text(size = 7))
+  
+```
 
