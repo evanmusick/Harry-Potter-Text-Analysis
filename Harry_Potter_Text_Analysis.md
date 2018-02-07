@@ -13,6 +13,7 @@ library(harrypotter)
 library(tidyverse)
 library(tidytext)
 library(stringr)
+library(ggthemes)
 library(knitr)
 
 books <- list("Sorcerer's Stone" = philosophers_stone, "Chamber of Secrets" = chamber_of_secrets, 
@@ -49,4 +50,43 @@ This gives us one word per row with identifiers for the book and chapter.
     ## 10       1 Sorcerer's Stone number 
     ## # ... with 1,089,376 more rows
 
+``` r
+characters_of_interest <- c("harry" = "Harry", "ron" = "Ron", "hermione" = "Hermione")
+
+all_books_raw %>%
+  count(book, word) %>%
+  mutate(freq_by_book = n/sum(n)) %>%
+  filter(word %in% names(characters_of_interest)) %>%
+  ggplot(aes(x = book, y = freq_by_book, fill = book)) + 
+  geom_bar(stat = "identity", alpha = .5) +
+  facet_grid(.~word,  scales = "free", labeller = as_labeller(characters_of_interest)) +
+  scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
+  scale_fill_brewer(guide = FALSE, palette = "Set1") +
+  coord_flip() +
+  labs(title = "Proportion of Character Mentions", x = "", y = "Proportion of All Words") +
+  theme_few() +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(size = 11))
+```
+
 ![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-1.png)
+
+``` r
+all_books_raw %>%
+  filter(word %in% names(characters_of_interest)) %>%
+  count(book, word) %>%
+  group_by(book) %>%
+  mutate(char_freq_by_book = n/sum(n)) %>%
+  ggplot(aes(x = book, y = char_freq_by_book, fill = word)) + 
+  geom_bar(stat = "identity", alpha = .7, position = "dodge") +
+  scale_fill_brewer(palette = "Dark2", labels = c("Harry", "Hermione", "Ron")) +
+  scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
+  coord_flip() +
+  labs(title = "Character Mentions Relative to Each Other", x = "", 
+       y = "Proportion", fill = "") +
+  theme_few() +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(size = 11))
+```
+
+![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-2.png)
