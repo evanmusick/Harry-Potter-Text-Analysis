@@ -128,38 +128,36 @@ $(document).ready(function () {
 
 <div id="reading-in-the-text" class="section level2">
 <h2>Reading in the Text</h2>
-<p>I found someone who has kindly provided access to the entire text of each Harry Potter book. The data can be accessed <a href="https://github.com/bradleyboehmke/harrypotter">here</a>. Each book is a character vector - one for each chapter. The chapter names are included at the beginning of each vector and need to be removed. There are some misspellings (“foribidden” instead of “forbidden”), so this may call into question the accuracy of the data.</p>
+<p>I found someone who has kindly provided access to the entire text of each Harry Potter book. The data can be accessed <a href="https://github.com/bradleyboehmke/harrypotter">here</a>. Each book is a character vector - one for each chapter.</p>
 <pre class="r"><code>library(harrypotter)
 library(tidyverse)
 library(tidytext)
+library(knitr)
 
-chapter_names &lt;- str_to_upper(c(&quot;The Boy Who Lived&quot;, &quot;The Vanishing Glass&quot;, &quot;The Letters from No One&quot;, 
-                                &quot;The Keeper of the Keys&quot;, &quot;Diagon Alley&quot;, 
-                                &quot;The Journey from Platform Nine and Three-Quarters&quot;, &quot;The Sorting Hat&quot;, 
-                                &quot;The Potions Master&quot;, &quot;The Midnight Duel&quot;, &quot;Halloween&quot;, &quot;Quidditch&quot;, 
-                                &quot;The Mirror of Erised&quot;, &quot;Nicolas Flamel&quot;, &quot;Norbert the Norwegian Ridgeback&quot;, 
-                                &quot;The Foribidden Forest&quot;, &quot;Through the Trapdoor&quot;, &quot;The Man with Two Faces&quot;))
+books &lt;- list(&quot;Sorcerer's Stone&quot; = philosophers_stone, &quot;Chamber of Secrets&quot; = chamber_of_secrets, 
+              &quot;Prisoner of Azkaban&quot; = prisoner_of_azkaban, &quot;Goblet of Fire&quot; = goblet_of_fire, 
+              &quot;Order of the Phoenix&quot; = order_of_the_phoenix, &quot;Half-Blood Prince&quot; = half_blood_prince,
+              &quot;Deathly Hallows&quot; = deathly_hallows)
 
-philosophers_stone_raw &lt;- tibble(philosophers_stone) %&gt;%
-  mutate(chapter = row_number(),
-         text = str_replace(philosophers_stone, chapter_names, &quot;&quot;)) %&gt;%
-  select(-philosophers_stone) %&gt;%
-  unnest_tokens(word, text)</code></pre>
-<p>This gives us the following:</p>
-<pre><code>## # A tibble: 77,816 x 2
-##    chapter word   
-##      &lt;int&gt; &lt;chr&gt;  
-##  1       1 mr     
-##  2       1 and    
-##  3       1 mrs    
-##  4       1 dursley
-##  5       1 of     
-##  6       1 number 
-##  7       1 four   
-##  8       1 privet 
-##  9       1 drive  
-## 10       1 were   
-## # ... with 77,806 more rows</code></pre>
+process_text &lt;- function(book_title, books){
+  book_text_raw &lt;- tibble(books[[book_title]]) %&gt;%
+    select(text = 1) %&gt;%
+    mutate(chapter = row_number(),
+           book = book_title) %&gt;%
+  unnest_tokens(word, text)
+}
+
+all_books_raw &lt;- bind_rows(lapply(names(books), process_text, books))</code></pre>
+<p>This gives us one word per row with identifiers for the book and chapter.</p>
+<pre><code>## # A tibble: 6 x 3
+##   chapter book             word 
+##     &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;
+## 1       1 Sorcerer's Stone the  
+## 2       1 Sorcerer's Stone boy  
+## 3       1 Sorcerer's Stone who  
+## 4       1 Sorcerer's Stone lived
+## 5       1 Sorcerer's Stone mr   
+## 6       1 Sorcerer's Stone and</code></pre>
 </div>
 
 
