@@ -37,6 +37,6 @@ all_books_raw <- bind_rows(lapply(names(books), process_text, books))
 ```
 This gives us one word per row with identifiers for the book and chapter.
 ```{r echo = FALSE}
-head(all_books_raw)
+all_books_raw
 ```
 

@@ -149,15 +149,20 @@ process_text &lt;- function(book_title, books){
 
 all_books_raw &lt;- bind_rows(lapply(names(books), process_text, books))</code></pre>
 <p>This gives us one word per row with identifiers for the book and chapter.</p>
-<pre><code>## # A tibble: 6 x 3
-##   chapter book             word 
-##     &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;
-## 1       1 Sorcerer's Stone the  
-## 2       1 Sorcerer's Stone boy  
-## 3       1 Sorcerer's Stone who  
-## 4       1 Sorcerer's Stone lived
-## 5       1 Sorcerer's Stone mr   
-## 6       1 Sorcerer's Stone and</code></pre>
+<pre><code>## # A tibble: 1,089,386 x 3
+##    chapter book             word   
+##      &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;  
+##  1       1 Sorcerer's Stone the    
+##  2       1 Sorcerer's Stone boy    
+##  3       1 Sorcerer's Stone who    
+##  4       1 Sorcerer's Stone lived  
+##  5       1 Sorcerer's Stone mr     
+##  6       1 Sorcerer's Stone and    
+##  7       1 Sorcerer's Stone mrs    
+##  8       1 Sorcerer's Stone dursley
+##  9       1 Sorcerer's Stone of     
+## 10       1 Sorcerer's Stone number 
+## # ... with 1,089,376 more rows</code></pre>
 </div>
 
 
