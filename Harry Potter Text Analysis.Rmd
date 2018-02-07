@@ -42,7 +42,7 @@ This gives us one word per row with identifiers for the book and chapter.
 all_books_raw
 ```
 
-```{r}
+```{r echo = FALSE}
 characters <- c("harry", "ron", "hermione", "dumbledore")
 
 all_books_raw %>%

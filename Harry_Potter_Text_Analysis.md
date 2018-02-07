@@ -49,19 +49,4 @@ This gives us one word per row with identifiers for the book and chapter.
     ## 10       1 Sorcerer's Stone number 
     ## # ... with 1,089,376 more rows
 
-``` r
-characters <- c("harry", "ron", "hermione", "dumbledore")
-
-all_books_raw %>%
-  count(book, word) %>%
-  mutate(freq_by_book = n/sum(n)) %>%
-  filter(word %in% characters) %>%
-  ggplot(aes(x = book, y = freq_by_book)) + 
-  geom_bar(stat = "identity") +
-  facet_wrap(~word,  scales = "free") +
-  scale_x_discrete(limits = rev(levels(all_books_raw$book))) + 
-  coord_flip() +
-  theme_bw()
-```
-
 ![](Harry_Potter_Text_Analysis_files/figure-markdown_github/unnamed-chunk-3-1.png)
